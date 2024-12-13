@@ -207,10 +207,14 @@
                 if(blank != 0)
                 {
                     const val = (Math.round((blank/(blank+live)) * 10000) / 100).toString();
-                    if(val === "100")
+                    if(live == 0)
+                        chance.innerText = '100%';
+                    else if(val === "100")
                         chance.innerText = '~100%';
                     else if(val === "0")
                         chance.innerText = '<0.01%';
+                    else if(val === "NaN")
+                        chance.innerText = '?';
                     else
                         chance.innerText = val + '%';
                 }
@@ -239,7 +243,7 @@
         </div>
         <div>
             <label for="text-input">manual input:</label>
-            <input type="text" id="text-input" name="text-input" minlength="3" placeholder="3-4" autofocus></input>
+            <input type="text" id="text-input" name="text-input" minlength="3" placeholder="?-?" autofocus></input>
             <p class="desc">
                 notes for manual input:<br>
                 - format must match the pattern <b>X-X</b> (where each <b>X</b> is either a number or an <b>*</b>)<br>
