@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+            :root {
+                font-family: 'JetBrains Mono', 'Consolas', 'Courier New', Courier, monospace;
+                background: #1f1f1f;
+                color: #c3c3c3;
+            }
+
+            .clear {
+                all: unset;
+            }
+
+            *, :before, :after {
+                box-sizing: border-box;
+            }
+
+            #text-input {
+                border: none;
+                border-radius: 10px;
+                background: #101010;
+                font-family: inherit;
+                font-size: 0.833333333rem;
+                color: inherit;
+                resize: none;
+                overflow: hidden;
+                padding: 4px;
+                border: 2px solid transparent;
+
+                box-sizing: content-box;
+
+                min-width: 3ch;
+                width: 3ch;
+
+                margin-block-end: 0;
+
+                outline: none;
+
+                transition: cubic-bezier(0.25, 0.46, 0.45, 0.94) border-color 0.1s;
+            }
+            #text-input:focus {
+                border-color: #fff;
+            }
+            #text-input:invalid {
+                border-color: red;
+            }
+            #text-input:focus:invalid {
+                border-color: #fe4848;
+            }
+
+            #live, .live {
+                color: #fe4848;
+            }
+            #blank, .blank {
+                color: cornflowerblue;
+            }
+
+            li {
+                cursor: default;
+                margin: 0;
+                line-height: 1.5em;
+            }
+
+            b, .counter-button {
+                font-weight: 900;
+            }
+
+            .counter-button {
+                cursor: pointer;
+                user-select: none;
+
+                padding-inline: 6px;
+                margin-inline: 2px;
+
+                border-radius: 8px;
+
+                outline-width: 2px;
+                outline-style: solid;
+                outline-color: transparent;
+            }
+            .counter-button:hover {
+                color: white;
+            }
+            .counter-button:focus-visible {
+                outline-color: white;
+                background-color: #101010;
+            }
+
+            .desc {
+                font-size: 0.8rem;
+                color: #909090;
+                margin-block-start: 0;
+            }
+
+            p {
+                cursor: default;
+                margin-block: 4px;
+            }
+
+            button {
+                font-size: 0.833333333rem;
+            }
+        </style>
+        <script>(() => {window.addEventListener("DOMContentLoaded", () => {
+
+            let live = 0;
+            let blank = 0;
+
+            const liveCounter = document.getElementById('live');
+            const blankCounter = document.getElementById('blank');
+            const chance = document.getElementById('chance');
+
+            document.getElementById('incLive').addEventListener('click', () => {
+                live++;
+                refreshValues();
+            });
+
+            document.getElementById('incBlank').addEventListener('click', () => {
+                blank++;
+                refreshValues();
+            });
+
+            document.getElementById('decLive').addEventListener('click', () => {
+                if(live > 0)
+                {
+                    live--;
+                    refreshValues();
+                }
+            });
+
+            document.getElementById('decBlank').addEventListener('click', () => {
+                if(blank > 0)
+                {
+                    blank--;
+                    refreshValues();
+                }
+            });
+
+            /**@type {HTMLInputElement}*/
+            const textInput = document.getElementById('text-input');
+
+            const textInputPattern = /(\d+|\*)-(\d+|\*)/;
+            textInput.pattern = `(\\d+|\\*)-(\\d+|\\*)`;
+
+            textInput.addEventListener('dblclick', () => {
+                textInput.setSelectionRange(0, textInput.value.length, "forward");
+            });
+
+            textInput.addEventListener('input', () => {
+                let min = textInput.placeholder.length;
+                if(textInput.value.length > 0) min = 3;
+                textInput.style.width = Math.max(min, textInput.value.length).toString() + 'ch';
+            });
+
+            textInput.addEventListener('keydown', event => {
+                if(event.key == "Enter")
+                    textSubmit();
+            });
+
+            textInput.addEventListener('submit', () => {
+                textSubmit();
+            });
+
+            function textSubmit() {
+                if(!textInput.checkValidity()) return;
+
+                textInput.blur();
+
+                if(textInput.value === null || textInput.value === "")
+                {
+                    if(textInput.value === "")
+                    {                        
+                        live = 0;
+                        blank = 0;
+                        refreshValues();
+                    }
+                    return;
+                }
+
+                const match = textInputPattern.exec(textInput.value);
+
+                if(match === null || match.length < 3) return;
+
+                live = match[1] === '*' ? live : Number(match[1]);
+                blank = match[2] === '*' ? blank : Number(match[2]);
+
+                refreshValues();
+            }
+
+            function refreshValues() {
+                if(live == 0 && blank == 0)
+                {
+                    liveCounter.innerText = '?';
+                    blankCounter.innerText = '?';
+                    chance.innerText = '?';
+                    return;
+                }
+
+                textInput.placeholder = `${live}-${blank}`;
+
+                liveCounter.innerText = live.toString();
+                blankCounter.innerText = blank.toString();
+
+                if(blank != 0)
+                {
+                    const val = (Math.round((blank/(blank+live)) * 10000) / 100).toString();
+                    if(val === "100")
+                        chance.innerText = '~100%';
+                    else if(val === "0")
+                        chance.innerText = '<0.01%';
+                    else
+                        chance.innerText = val + '%';
+                }
+                else
+                    chance.innerText = '0%';
+
+                while(liveCounter.innerText.length < blankCounter.innerText.length)
+                    liveCounter.innerHTML = liveCounter.innerText + '&nbsp;';
+                while(blankCounter.innerText.length < liveCounter.innerText.length)
+                    blankCounter.innerHTML = blankCounter.innerText + '&nbsp;';
+            }
+
+        });})()</script>
+    </head>
+    <body>
+        <div>
+            <p>buckshot-counter: keep track of your shells</p>
+            <p class="desc">
+                use the <b>+</b> and <b>-</b> buttons to change values, or type the values manually below
+            </p>
+            <ul style="list-style-type: none; padding-left: 0;">
+                <li><button role="button" tabindex="1" id="incLive" class="clear counter-button">+</button><button role="button" tabindex="2" id="decLive" class="clear counter-button">-</button>&nbsp;<span id="live">?</span>&nbsp;Live</li>
+                <li><button role="button" tabindex="3" id="incBlank" class="clear counter-button">+</button><button role="button" tabindex="4" id="decBlank" class="clear counter-button">-</button>&nbsp;<span id="blank">?</span>&nbsp;Blank</li>
+                <li class="desc">chance of blank: <b id="chance">?</b></li>
+            </ul>
+        </div>
+        <div>
+            <label for="text-input">manual input:</label>
+            <input type="text" id="text-input" name="text-input" minlength="3" placeholder="3-4" autofocus></input>
+            <p class="desc">
+                notes for manual input:<br>
+                - format must match the pattern <b>X-X</b> (where each <b>X</b> is either a number or an <b>*</b>)<br>
+                - the number order is <b><span class="live">LIVE</span>-<span class="blank">BLANK</span></b><br>
+                - using an <b>*</b> preserves the corresponding value<br>
+                - leave blank or type <b>0-0</b> to reset
+            </p>
+        </div>
+    </body>
+</html>
