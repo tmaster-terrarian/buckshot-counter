@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>buckshot-counter</title>
         <style>
             @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
 
@@ -150,10 +153,15 @@
             });
 
             textInput.addEventListener('input', () => {
+                refreshInputWidth();
+            });
+
+            function refreshInputWidth()
+            {
                 let min = textInput.placeholder.length;
                 if(textInput.value.length > 0) min = 3;
                 textInput.style.width = Math.max(min, textInput.value.length).toString() + 'ch';
-            });
+            }
 
             textInput.addEventListener('keydown', event => {
                 if(event.key == "Enter")
@@ -200,6 +208,7 @@
                 }
 
                 textInput.placeholder = `${live}-${blank}`;
+                refreshInputWidth();
 
                 liveCounter.innerText = live.toString();
                 blankCounter.innerText = blank.toString();
