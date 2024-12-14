@@ -21,6 +21,10 @@
                 box-sizing: border-box;
             }
 
+            main {
+                width: 64ch;
+            }
+
             #text-input {
                 border: none;
                 border-radius: 10px;
@@ -38,6 +42,11 @@
                 min-width: 3ch;
                 width: 3ch;
 
+                padding-inline: 4px;
+                padding-block: 4px;
+
+                height: calc(1rem + 2px);
+
                 margin-block-end: 0;
 
                 outline: none;
@@ -45,7 +54,7 @@
                 transition: cubic-bezier(0.25, 0.46, 0.45, 0.94) border-color 0.1s;
             }
             #text-input:focus {
-                border-color: #fff;
+                border-color: white;
             }
             #text-input:invalid {
                 border-color: red;
@@ -61,10 +70,20 @@
                 color: cornflowerblue;
             }
 
+            #live, #blank {
+                margin-inline: 1ch;
+            }
+
+            ul {
+                width: fit-content;
+            }
+
             li {
-                cursor: default;
                 margin: 0;
-                line-height: 1.5em;
+            }
+
+            li:not(.desc) {
+                line-height: 1.67em;
             }
 
             b, .counter-button {
@@ -75,32 +94,86 @@
                 cursor: pointer;
                 user-select: none;
 
-                padding-inline: 6px;
-                margin-inline: 2px;
+                padding-inline: 2px;
+                margin-inline: 4px;
 
                 border-radius: 8px;
 
-                outline-width: 2px;
+                /* outline-width: 2px;
                 outline-style: solid;
-                outline-color: transparent;
+                outline-color: transparent; */
+
+                position: relative;
+
+                color: #c3c3c3;
             }
             .counter-button:hover {
                 color: white;
             }
-            .counter-button:focus-visible {
-                outline-color: white;
-                background-color: #101010;
+
+            .c-dark {
+                color: #606060;
+                opacity: 0;
+            }
+            .counter-button:focus-visible .c-dark {
+                color: white;
+                opacity: 0;
             }
 
-            .desc {
+            .counter-button::before {
+                color: #606060;
+                display: inline-block;
+                position: absolute;
+                bottom: 0;
+                left: 2px;
+                content: "[";
+                font-weight: 600;
+                transition: 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) left;
+            }
+            .counter-button::after {
+                color: #606060;
+                display: inline-block;
+                position: absolute;
+                bottom: 0;
+                right: 2px;
+                content: "]";
+                font-weight: 600;
+                transition: 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) right;
+            }
+            .counter-button:focus-visible::before {
+                color: white;
+                left: 0;
+            }
+            .counter-button:focus-visible::after {
+                color: white;
+                right: 0;
+            }
+
+            h1, label {
+                font-size: 1rem;
+                margin-block: 8px;
+                font-weight: normal;
+            }
+
+            p, .desc {
                 font-size: 0.8rem;
                 color: #909090;
                 margin-block-start: 0;
+                margin-block: 4px;
             }
 
-            p {
-                cursor: default;
-                margin-block: 4px;
+            ul.desc {
+                margin-block: 0;
+            }
+            p:has(+ul.desc) {
+                margin-block-end: 0;
+            }
+            ul.desc li {
+                line-height: calc(1rem + 1px);
+            }
+
+            label {
+                cursor: text;
             }
 
             button {
@@ -115,6 +188,8 @@
             const liveCounter = document.getElementById('live');
             const blankCounter = document.getElementById('blank');
             const chance = document.getElementById('chance');
+
+            chance.style.marginInlineStart = '5ch';
 
             document.getElementById('incLive').addEventListener('click', () => {
                 live++;
@@ -204,6 +279,9 @@
                     liveCounter.innerText = '?';
                     blankCounter.innerText = '?';
                     chance.innerText = '?';
+                    liveCounter.style.paddingInlineStart = '0';
+                    blankCounter.style.paddingInlineStart = '0';
+                    chance.style.marginInlineStart = '5ch';
                     return;
                 }
 
@@ -212,6 +290,9 @@
 
                 liveCounter.innerText = live.toString();
                 blankCounter.innerText = blank.toString();
+
+                liveCounter.style.paddingInlineStart = (blankCounter.innerText.length - liveCounter.innerText.length) + 'ch';
+                blankCounter.style.paddingInlineStart = (liveCounter.innerText.length - blankCounter.innerText.length) + 'ch';
 
                 if(blank != 0)
                 {
@@ -230,36 +311,47 @@
                 else
                     chance.innerText = '0%';
 
-                while(liveCounter.innerText.length < blankCounter.innerText.length)
-                    liveCounter.innerHTML = liveCounter.innerText + '&nbsp;';
-                while(blankCounter.innerText.length < liveCounter.innerText.length)
-                    blankCounter.innerHTML = blankCounter.innerText + '&nbsp;';
+                chance.style.marginInlineStart = (6 - chance.innerText.length) + 'ch';
             }
 
         });})()</script>
     </head>
     <body>
-        <div>
-            <p>buckshot-counter: keep track of your shells</p>
-            <p class="desc">
-                use the <b>+</b> and <b>-</b> buttons to change values, or type the values manually below
-            </p>
-            <ul style="list-style-type: none; padding-left: 0;">
-                <li><button role="button" tabindex="1" id="incLive" class="clear counter-button">+</button><button role="button" tabindex="2" id="decLive" class="clear counter-button">-</button>&nbsp;<span id="live">?</span>&nbsp;Live</li>
-                <li><button role="button" tabindex="3" id="incBlank" class="clear counter-button">+</button><button role="button" tabindex="4" id="decBlank" class="clear counter-button">-</button>&nbsp;<span id="blank">?</span>&nbsp;Blank</li>
-                <li class="desc">chance of blank: <b id="chance">?</b></li>
-            </ul>
-        </div>
-        <div>
-            <label for="text-input">manual input:</label>
-            <input type="text" id="text-input" name="text-input" minlength="3" placeholder="?-?" autofocus></input>
-            <p class="desc">
-                notes for manual input:<br>
-                - format must match the pattern <b>X-X</b> (where each <b>X</b> is either a number or an <b>*</b>)<br>
-                - the number order is <b><span class="live">LIVE</span>-<span class="blank">BLANK</span></b><br>
-                - using an <b>*</b> preserves the corresponding value<br>
-                - leave blank or type <b>0-0</b> to reset
-            </p>
-        </div>
+        <main>
+            <section>
+                <h1>buckshot-counter: keep track of your shells</h1>
+                <p class="desc">
+                    use the <b>+</b> and <b>-</b> buttons to change values, or type the values manually below
+                </p>
+                <div style="
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: nowrap;
+                    justify-content: space-between;
+                    margin-block: 1em;
+                ">
+                    <ul style="list-style-type: none; padding-left: 0; margin-block: 0;">
+                        <li><button role="button" tabindex="1" id="incLive" class="clear counter-button"><span class="c-dark">[</span>+<span class="c-dark">]</span></button><button role="button" tabindex="2" id="decLive" class="clear counter-button"><span class="c-dark">[</span>-<span class="c-dark">]</span></button><span id="live">?</span>Live</li>
+                        <li><button role="button" tabindex="3" id="incBlank" class="clear counter-button"><span class="c-dark">[</span>+<span class="c-dark">]</span></button><button role="button" tabindex="4" id="decBlank" class="clear counter-button"><span class="c-dark">[</span>-<span class="c-dark">]</span></button><span id="blank">?</span>Blank</li>
+                    </ul>
+                    <ul style="list-style-type: none; padding-left: 0; margin-block: 0;" class="desc">
+                        <li>chance of blank: <b id="chance">?</b></li>
+                    </ul>
+                </div>
+            </section>
+            <section>
+                <h1 style="margin-block-end: 0;">
+                    <label for="text-input">manual input:</label>
+                    <input type="text" id="text-input" name="text-input" minlength="3" placeholder="?-?" autofocus></input>
+                </h1>
+                <p class="desc">notes for manual input:</p>
+                <ul class="desc" style="list-style-type: none; padding-left: 0;">
+                    <li>- format must match the pattern <b>X-X</b> (where each <b>X</b> is either a number or an <b>*</b>)</li>
+                    <li>- the number order is <b><span class="live">LIVE</span>-<span class="blank">BLANK</span></b></li>
+                    <li>- using an <b>*</b> preserves the corresponding value</li>
+                    <li>- leave blank or type <b>0-0</b> to reset</li>
+                </ul>
+            </section>
+        </main>
     </body>
 </html>
