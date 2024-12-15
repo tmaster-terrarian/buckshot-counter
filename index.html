@@ -95,6 +95,19 @@
                 font-weight: 900;
             }
 
+            a, a:visited, spab {
+                color: #c3c3c3;
+                text-decoration: none;
+                font-weight: 500;
+            }
+            spab {
+                color: #a3a3a3;
+            }
+            a:hover {
+                color: white;
+                text-decoration: underline;
+            }
+
             .counter-button {
                 cursor: pointer;
                 user-select: none;
@@ -210,6 +223,24 @@
                 padding-right: 1ch;
             }
 
+            hr {
+                border: none;
+                height: 1px;
+                background-color: #606060;
+                margin-block: 1em;
+            }
+
+            .footer {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                gap: 2rem;
+            }
+
+            .footer > div {
+                width: 50%;
+            }
+
             .layout {
                 display: flex;
                 flex-direction: row;
@@ -225,6 +256,14 @@
                     table {
                         margin-block-start: 1em;
                     }
+                }
+
+                .footer {
+                    display: block;
+                }
+
+                .footer > div {
+                    width: 100%;
                 }
             }
         </style>
@@ -384,7 +423,7 @@
             <section>
                 <h1>buckshot-counter: keep track of your shells</h1>
                 <p class="desc">
-                    use the <b>+</b> and <b>-</b> buttons to change values, or type the values manually below
+                    use the [<b>+</b>] and [<b>-</b>] buttons to change values, or type the values manually below
                 </p>
                 <div class="layout">
                     <ul style="list-style-type: none; padding-left: 0; margin-block: 0;">
@@ -423,6 +462,47 @@
                     <li>- using an <b>*</b> preserves the corresponding value</li>
                     <li>- leave blank or type <b>0-0</b> to reset</li>
                 </ul>
+            </section>
+            <hr>
+            <section>
+                <!-- <details open> -->
+                    <!-- <summary> -->
+                        <h1 style="display: inline;">credits</h1>
+                    <!-- </summary> -->
+                    <div class="desc footer">
+                        <div>
+                            <p>
+                                created by<br>
+                                <a href="https://bscit.dev/" target="_blank">bscit</a>
+                            </p>
+                            <p>
+                                tested by<br>
+                                <spab>evolutio</spab>
+                            </p>
+                            <p>
+                                with additional feedback from<br>
+                                <a href="https://mikeythemike.neocities.org/" target="_blank">mikey the goober</a>,
+                                <a href="https://www.youtube.com/@EseehcruoykcufI" target="_blank">dough</a>,
+                                <spab>qp</spab>
+                            </p>
+                        </div>
+                        <div>
+                            <p>
+                                license<br>
+                                <a href="https://git.sr.ht/~bscit/buckshot-counter/blob/main/LICENSE" target="_blank">MIT</a>
+                            </p>
+                            <p>
+                                source<br>
+                                <a href="https://git.sr.ht/~bscit/buckshot-counter" target="_blank">sr.ht</a>,
+                                <a href="https://github.com/tmaster-terrarian/buckshot-counter" target="_blank">github (mirror)</a>
+                            </p>
+                            <p>
+                                online version<br>
+                                <a href="https://tmaster-terrarian.github.io/buckshot-counter/" target="_blank">github pages</a>
+                            </p>
+                        </div>
+                    </div>
+                <!-- </details> -->
             </section>
         </main>
     </body>
